@@ -1,12 +1,17 @@
 pipeline {
     agent any
 
+    tools {
+        jdk 'JDK-21'
+    }
+
     stages {
-        stage('Checkout') {
+        stage('Verify Java') {
             steps {
-                git branch: 'main', url: 'https://github.com/riyajoshi2004/Springboot_Application.git'
+                sh 'java -version'
             }
         }
+
         stage('Hello') {
             steps {
                 echo 'Hello Jenkins'
