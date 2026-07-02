@@ -31,6 +31,13 @@ pipeline {
             }
         }
 
+        stage('Package') {
+            steps {
+                sh 'mvn package -DskipTests'
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+            }
+        }
+
         stage('Hello') {
             steps {
                 echo 'Hello Jenkins'
