@@ -6,6 +6,11 @@ pipeline {
         maven 'Maven-3'
     }
 
+    environment {
+        DOCKER_IMAGE = "hello-world-springboot"
+        DOCKER_TAG   = "${env.BUILD_NUMBER}"
+    }
+
     stages {
         stage('Verify Java') {
             steps {
@@ -35,6 +40,13 @@ pipeline {
             steps {
                 sh 'mvn package -DskipTests'
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
             }
         }
 
