@@ -50,6 +50,15 @@ pipeline {
             }
         }
 
+        stage('Deploy') {
+            steps {
+                sh '''
+                    docker rm -f hello-world-container || true
+                    docker run -d --name hello-world-container -p 9090:8080 ${DOCKER_IMAGE}:latest
+                '''
+            }
+        }
+
         stage('Hello') {
             steps {
                 echo 'Hello Jenkins'
