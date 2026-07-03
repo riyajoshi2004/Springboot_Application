@@ -7,8 +7,12 @@ pipeline {
     }
 
     environment {
-        DOCKER_IMAGE = "hello-world-springboot"
-        DOCKER_TAG   = "${env.BUILD_NUMBER}"
+        DOCKER_IMAGE     = "hello-world-springboot"
+        DOCKER_TAG       = "${env.BUILD_NUMBER}"
+        KUBECONFIG       = "/var/jenkins_home/.kube/config"
+        DOCKER_HOST      = "tcp://192.168.49.2:2376"
+        DOCKER_TLS_VERIFY = "1"
+        DOCKER_CERT_PATH  = "/tmp/.minikube/certs"
     }
 
     stages {
@@ -50,12 +54,10 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy to Kubernetes') {
             steps {
-                sh '''
-                    docker rm -f hello-world-container || true
-                    docker run -d --name hello-world-container -p 9090:8080 ${DOCKER_IMAGE}:latest
-                '''
+                sh "kubectl set image deployment/hello-world-deployment hello-world=${DOCKER_IMAGE}:${DOCKER_TAG} -n staging"
+                sh "kubectl rollout status deployment/hello-world-deployment -n staging"
             }
         }
 
