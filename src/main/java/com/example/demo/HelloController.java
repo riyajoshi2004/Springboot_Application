@@ -7,6 +7,6 @@ public class HelloController {
     @GetMapping("hello")
     public String hello(){
 
-        return "hello world";
+        return "hello world from CI/CD!";
     }
 }
